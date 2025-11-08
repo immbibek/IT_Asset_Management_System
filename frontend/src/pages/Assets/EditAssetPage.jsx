@@ -1,97 +1,61 @@
-import React, { useState, useEffect } from "react";
+// src/pages/Assets/EditAssetPage.jsx
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import useAssetsData from "../../hooks/useAssetsData";
+import { getAssetById, updateAsset } from "../../services/assetService";
+import Card from "../../components/ui/Card";
+import AssetForm from "../../components/forms/AssetForm";
 
 const EditAssetPage = () => {
-  const { id } = useParams(); // get asset id from URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { assets } = useAssetsData(); // get all assets
+  const { assets } = useAssetsData();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    status: "",
-    assignedTo: "",
-  });
+  const [formData, setFormData] = useState(null);
 
-  // Load asset data into form when page opens
   useEffect(() => {
-    const assetToEdit = assets.find((asset) => asset.id === id);
-    if (assetToEdit) {
-      setFormData({
-        name: assetToEdit.name || "",
-        category: assetToEdit.category || "",
-        status: assetToEdit.status || "",
-        assignedTo: assetToEdit.assignedTo || "",
-      });
-    }
+    const asset = getAssetById(id, assets);
+    if (asset) setFormData(asset);
   }, [id, assets]);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await updateAsset(formData);
+    navigate("/assets");
   };
 
-  // For now just console (later → API PUT request)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Updated Asset:", formData);
-    navigate("/assets"); // redirect after save
-  };
+  if (!formData)
+    return <p className="text-gray-600">Loading asset details...</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Edit Asset</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-        <input
-          type="text"
-          name="name"
-          className="border p-2 w-full rounded"
-          placeholder="Asset Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-
-        <select
-          name="category"
-          className="border p-2 w-full rounded"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">Select category</option>
-          <option value="Laptop">Laptop</option>
-          <option value="Monitor">Monitor</option>
-          <option value="Software">Software</option>
-        </select>
-
-        <select
-          name="status"
-          className="border p-2 w-full rounded"
-          value={formData.status}
-          onChange={handleChange}
-        >
-          <option value="">Select status</option>
-          <option value="Available">Available</option>
-          <option value="In Use">In Use</option>
-          <option value="Under Repair">Under Repair</option>
-        </select>
-
-        <input
-          type="text"
-          name="assignedTo"
-          className="border p-2 w-full rounded"
-          placeholder="Assigned To"
-          value={formData.assignedTo}
-          onChange={handleChange}
-        />
-
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
         <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          onClick={() => navigate("/assets")}
+          className="p-2 hover:bg-gray-100 rounded-lg"
         >
-          Save Changes
+          <ArrowLeft className="w-6 h-6 text-gray-600" />
         </button>
-      </form>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Edit Asset</h1>
+          <p className="text-gray-600 mt-1">
+            Update asset details - {formData.name}
+          </p>
+        </div>
+      </div>
+
+      <Card>
+        <AssetForm
+          formData={formData}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          submitText="Update Asset"
+        />
+      </Card>
     </div>
   );
 };
