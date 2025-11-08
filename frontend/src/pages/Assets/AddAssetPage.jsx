@@ -1,122 +1,81 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import AssetForm from "../../components/assets/AssetForm";
 
 const AddAssetPage = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    assetName: "",
+    name: "",
     category: "",
     serialNumber: "",
     purchaseDate: "",
-    vendor: "",
-    status: "Available",
+    cost: "",
+    warranty: "",
+    supplier: "",
+    location: "",
+    description: "",
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // For Now: Just log the data
-    console.log("New Asset Added:", formData);
-
-    // Later this will call backend:
-    // await axios.post("/api/assets", formData);
-
-    alert("Asset added successfully!");
+    console.log("Asset Submitted:", formData);
+    navigate("/assets");
   };
 
   return (
-    <div className="p-6">
-      <Card title="Add New Asset" className="max-w-3xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate("/assets")}
+          className="p-2 hover:bg-gray-100 rounded-lg transition"
+        >
+          <ArrowLeft className="w-6 h-6 text-gray-600" />
+        </button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Add New Asset</h1>
+          <p className="text-gray-600 mt-1">Enter asset details</p>
+        </div>
+      </div>
+
+      {/* Form */}
+      <Card>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <AssetForm formData={formData} handleChange={handleChange} />
+
           <div>
-            <label className="block text-sm font-medium">Asset Name</label>
-            <input
-              type="text"
-              name="assetName"
-              value={formData.assetName}
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              required
-              className="w-full border rounded-lg p-2"
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Additional details about the asset..."
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium">Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-              className="w-full border rounded-lg p-2"
+          <div className="flex items-center gap-3">
+            <Button type="submit" variant="primary">
+              Add Asset
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate("/assets")}
             >
-              <option value="">Select Category</option>
-              <option value="Laptop">Laptop</option>
-              <option value="Monitor">Monitor</option>
-              <option value="Keyboard">Keyboard</option>
-              <option value="Mouse">Mouse</option>
-            </select>
+              Cancel
+            </Button>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium">Serial Number</label>
-            <input
-              type="text"
-              name="serialNumber"
-              value={formData.serialNumber}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Purchase Date</label>
-            <input
-              type="date"
-              name="purchaseDate"
-              value={formData.purchaseDate}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Vendor</label>
-            <input
-              type="text"
-              name="vendor"
-              value={formData.vendor}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-2"
-            >
-              <option value="Available">Available</option>
-              <option value="In Use">In Use</option>
-              <option value="Under Repair">Under Repair</option>
-              <option value="Disposed">Disposed</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Add Asset
-          </button>
         </form>
       </Card>
     </div>
