@@ -6,6 +6,7 @@ import Layout from "./components/layout/Layout";
 // pages
 import DashboardPage from "./pages/DashboardPage";
 import AssetsListPage from "./pages/Assets/AssetsListPage";
+import AddAssetPage from "./pages/Assets/AddAssetPage";
 const App = () => {
   return (
     <Routes>
@@ -15,7 +16,7 @@ const App = () => {
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/assets" element={<AssetsListPage />} />
-
+        <Route path="/assets/add" element={<AddAssetPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
