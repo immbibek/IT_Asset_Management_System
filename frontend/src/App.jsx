@@ -5,7 +5,7 @@ import Layout from "./components/layout/Layout";
 
 // pages
 import DashboardPage from "./pages/DashboardPage";
-
+import AssetsListPage from "./pages/Assets/AssetsListPage";
 const App = () => {
   return (
     <Routes>
@@ -14,6 +14,7 @@ const App = () => {
       {/* All protected/dashboard UI */}
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/assets" element={<AssetsListPage />} />
 
         {/* Add more pages here */}
       </Route>
