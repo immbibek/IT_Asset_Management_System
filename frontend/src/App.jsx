@@ -14,6 +14,7 @@ const App = () => {
       {/* All protected/dashboard UI */}
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+
         {/* Add more pages here */}
       </Route>
     </Routes>
