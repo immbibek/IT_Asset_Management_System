@@ -8,6 +8,7 @@ import DashboardPage from "./pages/DashboardPage";
 import AssetsListPage from "./pages/Assets/AssetsListPage";
 import AddAssetPage from "./pages/Assets/AddAssetPage";
 import EditAssetPage from "./pages/Assets/EditAssetPage";
+import AssignmentsPage from "./pages/AssignmentsPage";
 const App = () => {
   return (
     <Routes>
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/assets" element={<AssetsListPage />} />
         <Route path="/assets/add" element={<AddAssetPage />} />
         <Route path="/assets/edit/:id" element={<EditAssetPage />} />
+        <Route path="/assignments" element={<AssignmentsPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
