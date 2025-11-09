@@ -9,6 +9,7 @@ import AssetsListPage from "./pages/Assets/AssetsListPage";
 import AddAssetPage from "./pages/Assets/AddAssetPage";
 import EditAssetPage from "./pages/Assets/EditAssetPage";
 import AssignmentsPage from "./pages/AssignmentsPage";
+import EmployeesPage from "./pages/EmployeesPage";
 const App = () => {
   return (
     <Routes>
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/assets/add" element={<AddAssetPage />} />
         <Route path="/assets/edit/:id" element={<EditAssetPage />} />
         <Route path="/assignments" element={<AssignmentsPage />} />
+        <Route path="/employees" element={<EmployeesPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
