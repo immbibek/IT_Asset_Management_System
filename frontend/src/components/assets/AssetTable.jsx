@@ -1,9 +1,33 @@
 import Table from "../ui/Table";
 import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-const AssetTable = ({ data }) => {
+const AssetTable = ({ data, onDelete }) => {
   const navigate = useNavigate();
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDelete = async (asset) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${asset.name}"?\n\nAsset ID: ${asset.id}\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    console.log("=== DELETE DEBUG ===");
+    console.log("Deleting asset ID:", asset.id);
+
+    try {
+      setDeletingId(asset.id);
+      await onDelete(asset.id);
+      console.log(`Asset ${asset.id} deleted successfully`);
+    } catch (error) {
+      console.error("Failed to delete asset:", error);
+      alert(`Failed to delete asset: ${error.message}`);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const columns = [
     { header: "Asset ID", accessor: "id" },
@@ -37,12 +61,22 @@ const AssetTable = ({ data }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(`/assets/edit/${row.id}`)}
-            className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+            className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            title="Edit Asset"
           >
             <Edit className="w-4 h-4" />
           </button>
 
-          <button className="p-1 text-red-600 hover:bg-red-50 rounded">
+          <button
+            onClick={() => handleDelete(row)}
+            disabled={deletingId === row.id}
+            className={`p-1 rounded transition-colors ${
+              deletingId === row.id
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-red-600 hover:bg-red-50"
+            }`}
+            title="Delete Asset"
+          >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
