@@ -11,6 +11,7 @@ import EditAssetPage from "./pages/Assets/EditAssetPage";
 import AssignmentsPage from "./pages/AssignmentsPage";
 import EmployeesPage from "./pages/EmployeesPage";
 import EmployeeAssetsPage from "./pages/EmployeeAssetsPage";
+import IssueReportPage from "./pages/IssueReportPage";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/assignments" element={<AssignmentsPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/employees/:id" element={<EmployeeAssetsPage />} />
+        <Route path="/employees/:id/report" element={<IssueReportPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
