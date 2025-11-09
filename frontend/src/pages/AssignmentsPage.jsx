@@ -51,7 +51,7 @@ const AssignmentsPage = () => {
         >
           <option value="">Choose Employee</option>
           {employees.map((e) => (
-            <option key={e.id} value={e.name}>
+            <option key={e.id} value={e.id}>
               {e.name} ({e.department})
             </option>
           ))}

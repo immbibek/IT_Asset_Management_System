@@ -11,50 +11,45 @@ const useAssignments = () => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Filter assets by name or ID
   const filteredAssets = useMemo(() => {
-    return assets.filter((asset) =>
-      asset.name.toLowerCase().includes(searchTerm.toLowerCase())
+    return assets.filter(
+      (asset) =>
+        asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        asset.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm, assets]);
 
+  // Open Assign Modal
   const openAssignModal = (asset) => {
     setSelectedAsset(asset);
     setIsModalOpen(true);
   };
 
+  // Assign Asset
   const handleAssign = () => {
-    if (!selectedEmployee) return;
+    if (!selectedEmployee || !selectedAsset) return;
 
+    // Find employee object
+    const employee = employees.find((e) => e.id === selectedEmployee);
+    if (!employee) return;
+
+    // Update the selected asset
     updateAsset({
       ...selectedAsset,
       status: "Assigned",
-      assignedTo: selectedEmployee,
+      assignedTo: employee.name,
     });
-
-    /* BACKEND INTEGRATION SPOT
-    --------------------------------------
-    Replace `updateAsset` with API call later:
-    await axios.put(`/api/assets/${selectedAsset.id}/assign`, {
-      employeeId: selectedEmployee
-    });
-    Then refetch assets.
-    --------------------------------------
-    */
 
     closeModal();
   };
 
+  // Unassign Asset
   const handleUnassign = (asset) => {
     updateAsset({ ...asset, status: "Available", assignedTo: null });
-
-    /* BACKEND INTEGRATION SPOT
-    --------------------------------------
-    await axios.put(`/api/assets/${asset.id}/unassign`);
-    Then refetch assets.
-    --------------------------------------
-    */
   };
 
+  // Close Modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAsset(null);
@@ -65,6 +60,7 @@ const useAssignments = () => {
     employees,
     filteredAssets,
     isModalOpen,
+    selectedAsset,
     selectedEmployee,
     openAssignModal,
     setSelectedEmployee,
