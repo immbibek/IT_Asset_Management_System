@@ -14,6 +14,7 @@ import EmployeeAssetsPage from "./pages/EmployeeAssetsPage";
 import IssueReportPage from "./pages/IssueReportPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import DepreciationPage from "./pages/DepreciationPage";
+import RequestsPage from "./pages/RequestsPage";
 const App = () => {
   return (
     <Routes>
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/employees/:id/report" element={<IssueReportPage />} />
         <Route path="/maintenance" element={<MaintenancePage />} />
         <Route path="/depreciation" element={<DepreciationPage />} />
+        <Route path="/requests" element={<RequestsPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
