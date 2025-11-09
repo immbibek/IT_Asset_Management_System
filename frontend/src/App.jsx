@@ -12,7 +12,8 @@ import AssignmentsPage from "./pages/AssignmentsPage";
 import EmployeesPage from "./pages/EmployeesPage";
 import EmployeeAssetsPage from "./pages/EmployeeAssetsPage";
 import IssueReportPage from "./pages/IssueReportPage";
-
+import MaintenancePage from "./pages/MaintenancePage";
+import DepreciationPage from "./pages/DepreciationPage";
 const App = () => {
   return (
     <Routes>
@@ -28,6 +29,8 @@ const App = () => {
         <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/employees/:id" element={<EmployeeAssetsPage />} />
         <Route path="/employees/:id/report" element={<IssueReportPage />} />
+        <Route path="/maintenance" element={<MaintenancePage />} />
+        <Route path="/depreciation" element={<DepreciationPage />} />
         {/* Add more pages here */}
       </Route>
     </Routes>
