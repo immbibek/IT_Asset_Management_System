@@ -7,7 +7,8 @@ import Button from "../components/ui/Button";
 const EmployeesPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-
+  // By Remove this dummy data and Use useEffect hook to integrate backned
+  
   const employees = [
     {
       id: "EMP-001",
