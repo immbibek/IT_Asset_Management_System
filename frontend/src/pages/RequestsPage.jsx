@@ -1,58 +1,19 @@
-import { useState } from "react";
 import { Search, Eye } from "lucide-react";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import useRequests from "../hooks/useRequests"; // Import the custom hook
 
 const RequestsPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-
-  const requests = [
-    {
-      id: "REQ-001",
-      assetId: "AST-012",
-      assetName: 'MacBook Pro 14"',
-      employee: "Sarah Williams",
-      issueType: "Hardware",
-      priority: "High",
-      status: "Open",
-      reportedDate: "2024-01-12",
-      description: "Keyboard keys not responding properly",
-    },
-    {
-      id: "REQ-002",
-      assetId: "AST-023",
-      assetName: "Dell Monitor",
-      employee: "Mike Johnson",
-      issueType: "Display",
-      priority: "Medium",
-      status: "In Progress",
-      reportedDate: "2024-01-11",
-      description: "Screen flickering intermittently",
-    },
-    {
-      id: "REQ-003",
-      assetId: "AST-034",
-      assetName: "iPhone 13",
-      employee: "John Doe",
-      issueType: "Software",
-      priority: "Low",
-      status: "Resolved",
-      reportedDate: "2024-01-10",
-      description: "App crashes on startup",
-    },
-    {
-      id: "REQ-004",
-      assetId: "AST-045",
-      assetName: "HP Printer",
-      employee: "Jane Smith",
-      issueType: "Hardware",
-      priority: "Critical",
-      status: "Open",
-      reportedDate: "2024-01-13",
-      description: "Printer not turning on",
-    },
-  ];
+  const {
+    requests,
+    summary,
+    loading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+  } = useRequests();
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -62,6 +23,8 @@ const RequestsPage = () => {
         return "bg-yellow-100 text-yellow-800";
       case "Resolved":
         return "bg-green-100 text-green-800";
+      case "Closed": // Added Closed status
+        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -82,6 +45,14 @@ const RequestsPage = () => {
     }
   };
 
+  if (loading) {
+    return <div className="text-center py-8 text-gray-600">Loading requests...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-red-600">Error: {error}</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -97,13 +68,13 @@ const RequestsPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               Total Requests
             </p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">24</p>
+            <p className="text-3xl font-bold text-blue-600 mt-2">{summary.totalRequests}</p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
             <p className="text-sm font-medium text-gray-500 uppercase">Open</p>
-            <p className="text-3xl font-bold text-red-600 mt-2">8</p>
+            <p className="text-3xl font-bold text-red-600 mt-2">{summary.openRequests}</p>
           </div>
         </Card>
         <Card>
@@ -111,7 +82,7 @@ const RequestsPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               In Progress
             </p>
-            <p className="text-3xl font-bold text-yellow-600 mt-2">5</p>
+            <p className="text-3xl font-bold text-yellow-600 mt-2">{summary.inProgressRequests}</p>
           </div>
         </Card>
         <Card>
@@ -119,7 +90,7 @@ const RequestsPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               Resolved
             </p>
-            <p className="text-3xl font-bold text-green-600 mt-2">11</p>
+            <p className="text-3xl font-bold text-green-600 mt-2">{summary.resolvedRequests}</p>
           </div>
         </Card>
       </div>
@@ -146,6 +117,7 @@ const RequestsPage = () => {
               <option value="Open">Open</option>
               <option value="In Progress">In Progress</option>
               <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option> {/* Added Closed status */}
             </select>
           </div>
         </div>
@@ -182,20 +154,20 @@ const RequestsPage = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {requests.map((request) => (
-                <tr key={request.id} className="hover:bg-gray-50">
+                <tr key={request._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {request.id}
+                    {request._id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     <div>
-                      <div className="font-medium">{request.assetName}</div>
+                      <div className="font-medium">{request.asset?.assetName || 'N/A'}</div>
                       <div className="text-xs text-gray-500">
-                        {request.assetId}
+                        {request.asset?._id || 'N/A'}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {request.employee}
+                    {request.reportingEmployee?.name || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     {request.issueType}
@@ -219,7 +191,7 @@ const RequestsPage = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {request.reportedDate}
+                    {new Date(request.reportedDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <Button

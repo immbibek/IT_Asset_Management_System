@@ -29,18 +29,58 @@ const createIssue = asyncHandler(async (req, res) => {
 // @route   GET /api/issues
 // @access  Private
 const getIssues = asyncHandler(async (req, res) => {
-  const { employeeId } = req.query; // Use query for filtering
+  const { employeeId, searchTerm, statusFilter } = req.query;
 
   let query = {};
   if (employeeId) {
-    query = { reportingEmployee: employeeId };
+    query.reportingEmployee = employeeId;
   }
 
-  const issues = await IssueReport.find(query)
+  if (statusFilter && statusFilter !== 'All') {
+    query.status = statusFilter;
+  }
+
+  if (searchTerm) {
+    query.$or = [
+      { description: { $regex: searchTerm, $options: 'i' } },
+      // Assuming assetName can be searched if populated
+      // This will require a separate lookup or a change in how assetName is stored/indexed
+      // For now, we'll search on populated asset.assetName in the next step
+    ];
+  }
+
+  let issues = await IssueReport.find(query)
     .populate('asset', 'assetName category serialNumber')
     .populate('reportingEmployee', 'name email');
 
+  // Client-side filtering for assetName if searchTerm is present and assetName is populated
+  if (searchTerm) {
+    issues = issues.filter(issue =>
+      issue.asset && issue.asset.assetName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
   res.json(issues);
+});
+
+// @desc    Get issue summary (counts by status)
+// @route   GET /api/issues/summary
+// @access  Private
+const getIssueSummary = asyncHandler(async (req, res) => {
+  const totalRequests = await IssueReport.countDocuments();
+  const openRequests = await IssueReport.countDocuments({ status: 'Open' });
+  const inProgressRequests = await IssueReport.countDocuments({ status: 'In Progress' });
+  const resolvedRequests = await IssueReport.countDocuments({ status: 'Resolved' });
+  const closedRequests = await IssueReport.countDocuments({ status: 'Closed' }); // Include Closed status
+
+  res.json({
+    totalRequests,
+    openRequests,
+    inProgressRequests,
+    resolvedRequests,
+    closedRequests,
+  });
 });
 
 // @desc    Get single issue by ID
@@ -103,4 +143,5 @@ export {
   getIssueById,
   updateIssue,
   deleteIssue,
+  getIssueSummary,
 };
