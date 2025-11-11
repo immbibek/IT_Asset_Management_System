@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js"; // Import user routes
 import authRoutes from "./routes/authRoutes.js"; // Import auth routes
 import employeeRoutes from "./routes/employeeRoutes.js"; // Import employee routes
 import issueRoutes from "./routes/issueRoutes.js"; // Import issue routes
+import maintenanceRoutes from "./routes/maintenanceRoutes.js"; // Import maintenance routes
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/api/users", userRoutes); // Use user routes
 app.use("/api/auth", authRoutes); // Use auth routes
 app.use("/api/employees", employeeRoutes); // Use employee routes
 app.use("/api/issues", issueRoutes); // Use issue routes
+app.use("/api/maintenance", maintenanceRoutes); // Use maintenance routes
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

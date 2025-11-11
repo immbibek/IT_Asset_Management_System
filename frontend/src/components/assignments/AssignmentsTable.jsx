@@ -4,9 +4,10 @@ import { UserPlus, UserMinus } from "lucide-react";
 const AssignmentsTable = ({ assets, assignments, onAssign, onUnassign }) => {
   const getAssignedEmployeeName = (assetId) => {
     const activeAssignment = assignments.find(
-      (assignment) => assignment.asset._id === assetId && !assignment.returnDate
+      (assignment) =>
+        assignment.asset && assignment.asset._id === assetId && !assignment.returnDate
     );
-    return activeAssignment ? activeAssignment.employee.name : null;
+    return activeAssignment && activeAssignment.employee ? activeAssignment.employee.name : null;
   };
 
   return (

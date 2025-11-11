@@ -20,11 +20,11 @@ const Modal = ({ isOpen, onClose, title, children, size = "md" }) => {
 
       {/* Modal Content */}
       <div
-        className={`relative bg-white rounded-xl shadow-2xl p-6 w-full ${sizeClasses[size]} transform transition-all`}
+        className={`relative bg-white rounded-xl shadow-2xl p-6 w-full ${sizeClasses[size]} transform transition-all max-h-[90vh] overflow-y-auto`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 sticky top-0 bg-white pb-4 z-10"> {/* Added sticky header */}
           <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
           <button
             onClick={onClose}
