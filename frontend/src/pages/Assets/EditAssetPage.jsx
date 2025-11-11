@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAssetContext } from "../../context/AssetContext";
+import useAssetsData from "../../hooks/useAssetsData";
 import { ArrowLeft } from "lucide-react";
 import Card from "../../components/ui/Card";
-import AssetForm from "../../components/forms/AssetForm";
+import AssetForm from "../../components/assets/AssetForm";
 
 const defaultForm = {
   id: "",
-  name: "",
+  name: "", // This will be mapped from assetName for display
   category: "",
   serialNumber: "",
   purchaseDate: "",
   cost: "",
   status: "Available",
+  warranty: "",
+  supplier: "",
+  location: "",
 };
 
 const EditAssetPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { assets, updateAsset } = useAssetContext();
+  const { assets, updateAsset } = useAssetsData();
 
   const [formData, setFormData] = useState(defaultForm);
   const [loading, setLoading] = useState(true);
@@ -52,18 +55,17 @@ const EditAssetPage = () => {
     console.log("5. Found Asset:", asset);
 
     if (asset) {
-      // Ensure all fields have values (no undefined)
+      // Ensure all fields have values (no undefined) and map assetName to name
       setFormData({
         id: asset.id || "",
-        name: asset.name || "",
+        name: asset.assetName || "", // Map backend assetName to frontend name
         category: asset.category || "",
         serialNumber: asset.serialNumber || "",
-        purchaseDate: asset.purchaseDate || "",
+        purchaseDate: asset.purchaseDate ? asset.purchaseDate.split('T')[0] : "", // Format date for input
         cost: asset.cost || "",
         warranty: asset.warranty || "",
         supplier: asset.supplier || "",
         location: asset.location || "",
-        description: asset.description || "",
         status: asset.status || "Available",
       });
       setError(null);

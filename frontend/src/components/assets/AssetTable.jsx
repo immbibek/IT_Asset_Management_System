@@ -9,7 +9,7 @@ const AssetTable = ({ data, onDelete }) => {
 
   const handleDelete = async (asset) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${asset.name}"?\n\nAsset ID: ${asset.id}\nThis action cannot be undone.`
+      `Are you sure you want to delete "${asset.assetName}"?\n\nAsset ID: ${asset.id}\nThis action cannot be undone.`
     );
 
     if (!confirmed) return;
@@ -31,11 +31,14 @@ const AssetTable = ({ data, onDelete }) => {
 
   const columns = [
     { header: "Asset ID", accessor: "id" },
-    { header: "Name", accessor: "name" },
+    { header: "Name", accessor: "assetName" }, // Changed from 'name' to 'assetName'
     { header: "Category", accessor: "category" },
     { header: "Serial Number", accessor: "serialNumber" },
     { header: "Purchase Date", accessor: "purchaseDate" },
     { header: "Cost", accessor: "cost" },
+    { header: "Warranty (Months)", accessor: "warranty" }, // New column
+    { header: "Supplier", accessor: "supplier" }, // New column
+    { header: "Location", accessor: "location" }, // New column
     {
       header: "Status",
       accessor: "status",
@@ -44,10 +47,13 @@ const AssetTable = ({ data, onDelete }) => {
           Available: "bg-green-100 text-green-800",
           Assigned: "bg-blue-100 text-blue-800",
           "Under Maintenance": "bg-orange-100 text-orange-800",
+          Retired: "bg-red-100 text-red-800", // Added Retired status
         };
         return (
           <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold ${colors[value]}`}
+            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              colors[value] || "bg-gray-100 text-gray-800"
+            }`}
           >
             {value}
           </span>

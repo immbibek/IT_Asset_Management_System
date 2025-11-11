@@ -1,22 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import employeeService from "../services/employeeService";
+import axios from "axios"; // Import axios for submitting issue
 
 const IssueReportPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // This `id` is the employee ID
   const [formData, setFormData] = useState({
     assetId: "",
     issueType: "",
     priority: "",
     description: "",
   });
+  const [employeeAssets, setEmployeeAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchEmployeeAssets = async () => {
+      try {
+        const assets = await employeeService.getEmployeeAssets(id);
+        setEmployeeAssets(assets);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeAssets();
+  }, [id]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/employees/${id}`);
+    try {
+      await axios.post("http://localhost:5000/api/issues", {
+        ...formData,
+        reportingEmployeeId: id, // Add the employee ID to the form data
+      });
+      navigate(`/employees/${id}`);
+    } catch (err) {
+      console.error("Failed to report issue:", err);
+      setError(err);
+    }
   };
 
   const handleChange = (e) => {
@@ -26,11 +55,8 @@ const IssueReportPage = () => {
     });
   };
 
-  const assets = [
-    { id: "AST-001", name: 'MacBook Pro 16"' },
-    { id: "AST-006", name: "iPhone 14 Pro" },
-    { id: "AST-012", name: 'Dell Monitor 27"' },
-  ];
+  if (loading) return <p>Loading assets...</p>;
+  if (error) return <p>Error loading assets: {error.message}</p>;
 
   return (
     <div className="space-y-6">
@@ -64,9 +90,9 @@ const IssueReportPage = () => {
                 required
               >
                 <option value="">Choose an asset</option>
-                {assets.map((asset) => (
+                {employeeAssets.map((asset) => (
                   <option key={asset.id} value={asset.id}>
-                    {asset.id} - {asset.name}
+                    {asset.name} (SN: {asset.serialNumber})
                   </option>
                 ))}
               </select>

@@ -49,25 +49,11 @@ const initialAssets = [
 ];
 
 // Toggle this to switch between frontend-only and backend mode
-const USE_BACKEND = false; // Set to true when backend is ready
-const API_URL = "http://localhost:3000/api/assets"; // Your backend URL
+const USE_BACKEND = true; // Set to true when backend is ready
+const API_URL = "http://localhost:5000/api/assets"; // Your backend URL
 
 const useAssetsData = () => {
-  const [assets, setAssets] = useState(() => {
-    if (USE_BACKEND) return [];
-    
-    // Frontend-only mode: use localStorage
-    const saved = localStorage.getItem("assets");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved assets:", e);
-        return initialAssets;
-      }
-    }
-    return initialAssets;
-  });
+  const [assets, setAssets] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -93,8 +79,15 @@ const useAssetsData = () => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error("Failed to fetch assets");
-      const data = await response.json();
-      setAssets(data);
+      const { data } = await response.json(); // Assuming the backend returns { success: true, data: [...] }
+      // Map backend '_id' to frontend 'id' and 'assetName' to 'name' for all fetched assets
+      setAssets(
+        data.map((asset) => ({
+          ...asset,
+          id: asset._id,
+          name: asset.assetName,
+        }))
+      );
     } catch (err) {
       setError(err.message);
       console.error("Error fetching assets:", err);
@@ -107,15 +100,34 @@ const useAssetsData = () => {
   const addAsset = async (newAsset) => {
     if (USE_BACKEND) {
       try {
+        // Map frontend 'name' to backend 'assetName' and remove 'id'
+        const assetToSend = {
+          assetName: newAsset.assetName, // Corrected to assetName
+          category: newAsset.category,
+          serialNumber: newAsset.serialNumber,
+          purchaseDate: newAsset.purchaseDate,
+          cost: newAsset.cost,
+          status: newAsset.status,
+          warranty: newAsset.warranty,
+          supplier: newAsset.supplier,
+          location: newAsset.location,
+        };
+
         const response = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newAsset),
+          body: JSON.stringify(assetToSend),
         });
         if (!response.ok) throw new Error("Failed to add asset");
-        const savedAsset = await response.json();
-        setAssets((prev) => [...prev, savedAsset]);
-        return savedAsset;
+        const { data: savedAsset } = await response.json(); // Assuming the backend returns { success: true, data: {...} }
+        // Map backend '_id' to frontend 'id' and 'assetName' to 'name'
+        const newAssetWithFrontendId = {
+          ...savedAsset,
+          id: savedAsset._id,
+          name: savedAsset.assetName,
+        };
+        setAssets((prev) => [...prev, newAssetWithFrontendId]);
+        return newAssetWithFrontendId;
       } catch (err) {
         console.error("Error adding asset:", err);
         throw err;
@@ -131,17 +143,38 @@ const useAssetsData = () => {
   const updateAsset = async (updatedAsset) => {
     if (USE_BACKEND) {
       try {
+        // Map frontend 'name' to backend 'assetName' and use '_id' for the URL
+        const assetToSend = {
+          assetName: updatedAsset.name,
+          category: updatedAsset.category,
+          serialNumber: updatedAsset.serialNumber,
+          purchaseDate: updatedAsset.purchaseDate,
+          cost: updatedAsset.cost,
+          status: updatedAsset.status,
+          warranty: updatedAsset.warranty,
+          supplier: updatedAsset.supplier,
+          location: updatedAsset.location,
+        };
+
         const response = await fetch(`${API_URL}/${updatedAsset.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedAsset),
+          body: JSON.stringify(assetToSend),
         });
         if (!response.ok) throw new Error("Failed to update asset");
-        const updated = await response.json();
+        const { data: updated } = await response.json(); // Assuming the backend returns { success: true, data: {...} }
+        // Map backend '_id' to frontend 'id' and 'assetName' to 'name'
+        const updatedAssetWithFrontendId = {
+          ...updated,
+          id: updated._id,
+          name: updated.assetName,
+        };
         setAssets((prev) =>
-          prev.map((asset) => (asset.id === updated.id ? updated : asset))
+          prev.map((asset) =>
+            asset.id === updatedAsset.id ? updatedAssetWithFrontendId : asset
+          )
         );
-        return updated;
+        return updatedAssetWithFrontendId;
       } catch (err) {
         console.error("Error updating asset:", err);
         throw err;

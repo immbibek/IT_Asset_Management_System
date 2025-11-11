@@ -11,12 +11,15 @@ const AddAssetPage = () => {
   const { addAsset } = useAssetsData();
 
   const [formData, setFormData] = useState({
-    name: "",
+    assetName: "", // Changed from 'name' to 'assetName'
     category: "",
     serialNumber: "",
     purchaseDate: "",
     cost: "",
-    status: "Available",
+    status: "Available", // Default status
+    warranty: "", // New field
+    supplier: "", // New field
+    location: "", // New field
   });
 
   const handleChange = (e) => {
@@ -29,16 +32,8 @@ const AddAssetPage = () => {
     console.log("=== ADD ASSET DEBUG ===");
     console.log("Form Data:", formData);
 
-    // Generate unique ID
-    const newAsset = {
-      ...formData,
-      id: `AST-${String(Date.now()).slice(-3).padStart(3, "0")}`,
-    };
-
-    console.log("New Asset with ID:", newAsset);
-
     try {
-      await addAsset(newAsset);
+      await addAsset(formData); // Pass formData directly, backend generates ID
       console.log("Asset added successfully!");
       navigate("/assets");
     } catch (error) {

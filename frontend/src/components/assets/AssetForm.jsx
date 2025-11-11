@@ -13,8 +13,8 @@ const AssetForm = ({ formData, handleChange }) => {
         </label>
         <input
           type="text"
-          name="name"
-          value={formData.name}
+          name="assetName"
+          value={formData.assetName}
           onChange={handleChange}
           className={inputClass}
           placeholder="MacBook Pro 16"
@@ -139,6 +139,24 @@ const AssetForm = ({ formData, handleChange }) => {
           placeholder="HQ - Floor 3"
           required
         />
+      </div>
+      {/* Status */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Status
+        </label>
+        <select
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          className={inputClass}
+          required
+        >
+          <option value="Available">Available</option>
+          <option value="Assigned">Assigned</option>
+          <option value="Under Maintenance">Under Maintenance</option>
+          <option value="Retired">Retired</option>
+        </select>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import EditAssetPage from "./pages/Assets/EditAssetPage";
 import AssignmentsPage from "./pages/AssignmentsPage";
 import EmployeesPage from "./pages/EmployeesPage";
 import EmployeeAssetsPage from "./pages/EmployeeAssetsPage";
+import AddEmployeePage from "./pages/AddEmployeePage"; // Import AddEmployeePage
 import IssueReportPage from "./pages/IssueReportPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import DepreciationPage from "./pages/DepreciationPage";
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/assets/edit/:id" element={<EditAssetPage />} />
         <Route path="/assignments" element={<AssignmentsPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
+        <Route path="/employees/add" element={<AddEmployeePage />} /> {/* Add route for AddEmployeePage */}
         <Route path="/employees/:id" element={<EmployeeAssetsPage />} />
         <Route path="/employees/:id/report" element={<IssueReportPage />} />
         <Route path="/maintenance" element={<MaintenancePage />} />

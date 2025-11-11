@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
     password: {
       type: String,
       required: true
+    },
+    department: { // Add department field
+      type: String,
+      required: false,
+      default: "Unassigned"
     }
 })
 

@@ -11,11 +11,11 @@ import AssetTable from "../../components/assets/AssetTable";
 
 const AssetsListPage = () => {
   const navigate = useNavigate();
-  const { assets, deleteAsset } = useAssetsData(); // ← ADD deleteAsset here
+  const { assets, deleteAsset } = useAssetsData(); 
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAssets = assets.filter((asset) =>
-    asset.name.toLowerCase().includes(searchTerm.toLowerCase())
+    asset.assetName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

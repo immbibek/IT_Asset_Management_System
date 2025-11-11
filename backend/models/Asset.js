@@ -1,33 +1,33 @@
 import mongoose from "mongoose";
 
-const assetSchema = new mongoose.Schema({
-  assetName: {
-    type: String,
-    required: true,
+const assetSchema = new mongoose.Schema(
+  {
+    assetName: { type: String, required: true },
+    category: { type: String, required: true },
+    serialNumber: { type: String, required: true, unique: true },
+    purchaseDate: { type: Date },
+    cost: { type: String, required: true },
+    status: {
+      type: String,
+      required: true,
+    },
+    warranty : {
+      type : Number,
+      required : true
+    },
+    supplier : {
+        type : String,
+        required : true
+    },
+    location : {
+        type : String,
+        required :true
+    }
   },
-  category: {
-    type: String,
-    required: true,
-  },
-  serialNumber: {
-    type: String,
-    required: true,
-  },
-  purchaseDate: {
-    type: Date,
-  },
-  status: {
-    type: String,
-    enum: ["assigned", "available", "under maintenance", "retired"],
-    required: true,
-    default: "available",
-  },
-  cost: {
-    type: String,
-    required: true,
-  },
-});
+  
+);
 
-export const assetModel =
-  mongoose.models.assetCollections ||
-  mongoose.model("assetCollections", assetSchema);
+// Correct Model Naming
+const Asset = mongoose.models.Asset || mongoose.model("Asset", assetSchema);
+
+export default Asset;

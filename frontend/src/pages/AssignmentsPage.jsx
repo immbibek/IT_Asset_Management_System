@@ -18,6 +18,7 @@ const AssignmentsPage = () => {
     closeModal,
     searchTerm,
     setSearchTerm,
+    assignments, // Get assignments from the hook
   } = useAssignments();
 
   return (
@@ -38,6 +39,7 @@ const AssignmentsPage = () => {
 
         <AssignmentsTable
           assets={filteredAssets}
+          assignments={assignments} // Pass assignments to the table
           onAssign={openAssignModal}
           onUnassign={handleUnassign}
         />
@@ -51,7 +53,7 @@ const AssignmentsPage = () => {
         >
           <option value="">Choose Employee</option>
           {employees.map((e) => (
-            <option key={e.id} value={e.id}>
+            <option key={e.id} value={e.id}> {/* Use frontend 'id' for employee */}
               {e.name} ({e.department})
             </option>
           ))}

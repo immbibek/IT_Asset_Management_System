@@ -4,13 +4,15 @@ import {
   getAllAssets,
   updateAsset,
   deleteAsset,
+  seedAssets, // Import seedAssets
 } from "../controllers/assetController.js";
 
-const AssetRouter = express.Router();
+const router = express.Router();
 
-AssetRouter.post("/assets", createAsset);
-AssetRouter.get("/assets", getAllAssets);
-AssetRouter.put("/assets/:id", updateAsset);
-AssetRouter.delete("/assets/:id", deleteAsset);
+router.post("/", createAsset);
+router.get("/", getAllAssets);
+router.put("/:id", updateAsset);
+router.delete("/:id", deleteAsset);
+router.post("/seed", seedAssets); // Add a route for seeding assets
 
-export default AssetRouter;
+export default router;

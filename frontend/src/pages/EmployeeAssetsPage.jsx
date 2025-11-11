@@ -2,40 +2,42 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, FileText } from "lucide-react";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import { useState, useEffect } from "react";
+import employeeService from "../services/employeeService"; // Import the new service
+import axios from "axios"; // Import axios for fetching employee details
 
 const EmployeeAssetsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [employee, setEmployee] = useState(null);
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const employee = {
-    id: "EMP-001",
-    name: "John Doe",
-    email: "john.doe@company.com",
-    department: "Engineering",
-    assets: [
-      {
-        id: "AST-001",
-        name: 'MacBook Pro 16"',
-        category: "Laptop",
-        serialNumber: "MBP-2023-001",
-        assignedDate: "2023-05-10",
-      },
-      {
-        id: "AST-006",
-        name: "iPhone 14 Pro",
-        category: "Phone",
-        serialNumber: "IPH-14P-789",
-        assignedDate: "2023-06-15",
-      },
-      {
-        id: "AST-012",
-        name: 'Dell Monitor 27"',
-        category: "Monitor",
-        serialNumber: "DEL-MON-345",
-        assignedDate: "2023-05-10",
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        // Fetch employee details (assuming a /api/users/:id endpoint exists or can be created)
+        // For now, we'll use a placeholder or fetch all users and find the one
+        const allEmployees = await employeeService.getEmployees();
+        const currentEmployee = allEmployees.find(emp => emp._id === id);
+        setEmployee(currentEmployee);
+
+        const employeeAssets = await employeeService.getEmployeeAssets(id);
+        setAssets(employeeAssets);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeData();
+  }, [id]);
+
+  if (loading) return <p>Loading employee assets...</p>;
+  if (error) return <p>Error loading employee assets: {error.message}</p>;
+  if (!employee) return <p>Employee not found.</p>;
 
   return (
     <div className="space-y-6">
@@ -83,7 +85,7 @@ const EmployeeAssetsPage = () => {
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-600">Total Assets</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {employee.assets.length}
+                    {assets.length}
                   </p>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
@@ -127,7 +129,7 @@ const EmployeeAssetsPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {employee.assets.map((asset) => (
+              {assets.map((asset) => (
                 <tr key={asset.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {asset.id}
@@ -142,7 +144,7 @@ const EmployeeAssetsPage = () => {
                     {asset.serialNumber}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {asset.assignedDate}
+                    {new Date(asset.assignedDate).toLocaleDateString()}
                   </td>
                 </tr>
               ))}

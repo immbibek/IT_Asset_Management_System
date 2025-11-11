@@ -1,33 +1,37 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import employeeService from "../services/employeeService"; // Import the new service
 
 const EmployeeContext = createContext();
 
 export const EmployeeProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // TEMPORARY: mock data (replace with backend later)
-    setEmployees([
-      { id: "EMP-001", name: "John Doe", department: "Engineering" },
-      { id: "EMP-002", name: "Jane Smith", department: "Design" },
-      { id: "EMP-003", name: "Mike Johnson", department: "Marketing" },
-      { id: "EMP-004", name: "Sarah Williams", department: "Sales" },
-    ]);
+    const fetchEmployees = async () => {
+      try {
+        const data = await employeeService.getEmployees();
+        setEmployees(
+          data.map((user) => ({
+            ...user,
+            id: user._id, // Map backend '_id' to frontend 'id'
+            name: user.name,
+            department: user.department || "N/A",
+          }))
+        );
+      } catch (err) {
+        setError(err);
+        console.error("Error fetching employees in context:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEmployees();
   }, []);
-
-  /* BACKEND INTEGRATION SPOT
-  -------------------------------------
-  When backend is ready:
-  useEffect(() => {
-    fetch("/api/employees")
-      .then(res => res.json())
-      .then(data => setEmployees(data));
-  }, []);
-  -------------------------------------
-  */
 
   return (
-    <EmployeeContext.Provider value={{ employees }}>
+    <EmployeeContext.Provider value={{ employees, loading, error }}>
       {children}
     </EmployeeContext.Provider>
   );
