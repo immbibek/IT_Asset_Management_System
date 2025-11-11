@@ -1,5 +1,4 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
 import Card from "../components/ui/Card";
 import {
   LineChart,
@@ -11,57 +10,26 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import useDepreciation from "../hooks/useDepreciation"; // Import the custom hook
 
 const DepreciationPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const {
+    summary,
+    details,
+    trend,
+    loading,
+    error,
+    searchTerm,
+    setSearchTerm,
+  } = useDepreciation();
 
-  const depreciationData = [
-    { month: "Jan", value: 285000 },
-    { month: "Feb", value: 280000 },
-    { month: "Mar", value: 275000 },
-    { month: "Apr", value: 268000 },
-    { month: "May", value: 262000 },
-    { month: "Jun", value: 255000 },
-  ];
+  if (loading) {
+    return <div className="text-center py-8 text-gray-600">Loading depreciation data...</div>;
+  }
 
-  const assets = [
-    {
-      id: "AST-001",
-      name: 'MacBook Pro 16"',
-      purchaseCost: "$2,499",
-      currentValue: "$1,999",
-      depreciation: "20%",
-      purchaseDate: "2023-01-15",
-      lifespan: "4 years",
-    },
-    {
-      id: "AST-002",
-      name: 'Dell Monitor 27"',
-      purchaseCost: "$399",
-      currentValue: "$319",
-      depreciation: "20%",
-      purchaseDate: "2023-02-20",
-      lifespan: "5 years",
-    },
-    {
-      id: "AST-003",
-      name: "iPhone 14 Pro",
-      purchaseCost: "$1,099",
-      currentValue: "$769",
-      depreciation: "30%",
-      purchaseDate: "2023-03-10",
-      lifespan: "3 years",
-    },
-    {
-      id: "AST-004",
-      name: "HP Printer LaserJet",
-      purchaseCost: "$549",
-      currentValue: "$329",
-      depreciation: "40%",
-      purchaseDate: "2022-11-05",
-      lifespan: "5 years",
-    },
-  ];
+  if (error) {
+    return <div className="text-center py-8 text-red-600">Error: {error}</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -80,7 +48,7 @@ const DepreciationPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               Total Purchase Cost
             </p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">$285,000</p>
+            <p className="text-3xl font-bold text-blue-600 mt-2">${parseFloat(summary.totalPurchaseCost).toLocaleString()}</p>
           </div>
         </Card>
         <Card>
@@ -88,7 +56,7 @@ const DepreciationPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               Current Total Value
             </p>
-            <p className="text-3xl font-bold text-green-600 mt-2">$255,000</p>
+            <p className="text-3xl font-bold text-green-600 mt-2">${parseFloat(summary.currentTotalValue).toLocaleString()}</p>
           </div>
         </Card>
         <Card>
@@ -96,14 +64,14 @@ const DepreciationPage = () => {
             <p className="text-sm font-medium text-gray-500 uppercase">
               Total Depreciation
             </p>
-            <p className="text-3xl font-bold text-red-600 mt-2">$30,000</p>
+            <p className="text-3xl font-bold text-red-600 mt-2">${parseFloat(summary.totalDepreciation).toLocaleString()}</p>
           </div>
         </Card>
       </div>
 
       <Card title="Asset Value Trend">
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={depreciationData}>
+          <LineChart data={trend}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -162,7 +130,7 @@ const DepreciationPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {assets.map((asset) => (
+              {details.map((asset) => (
                 <tr key={asset.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {asset.id}
@@ -171,10 +139,10 @@ const DepreciationPage = () => {
                     {asset.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {asset.purchaseCost}
+                    ${asset.purchaseCost}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                    {asset.currentValue}
+                    ${asset.currentValue}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">

@@ -22,6 +22,11 @@ const assetSchema = new mongoose.Schema(
     location : {
         type : String,
         required :true
+    },
+    lifespan: {
+      type: Number,
+      required: true,
+      default: 5, // Default to 5 years if not provided
     }
   },
   
